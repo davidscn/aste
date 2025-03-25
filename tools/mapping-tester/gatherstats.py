@@ -65,7 +65,7 @@ def timingStats(dir: pathlib.Path):
         df = (
             pl.read_csv(timings_file)
             .filter(pl.col("participant") == "B")
-            .select("event", "duration")
+            .select("event", "duration", "rank")
         )
         return {
             "globalTime": df.filter(pl.col("event") == "_GLOBAL")
@@ -97,7 +97,7 @@ def timingStats(dir: pathlib.Path):
                     "^initialize/map..*.computeMapping.queryVertices$"
                 )
             )
-            .groupby("rank")
+            .group_by("rank")
             .agg(pl.col("duration").sum().alias("duration_sum"))
             .select(pl.col("duration_sum").max())
             .item(),
@@ -106,35 +106,40 @@ def timingStats(dir: pathlib.Path):
                     "^initialize/map..*.computeMapping.rbfSolver$"
                 )
             )
-            .groupby("rank")
+            .group_by("rank")
             .agg(pl.col("duration").sum().alias("duration_sum"))
             .select(pl.col("duration_sum").max())
             .item(),
-            "PUMcreateClusteringTime": df.select(
+            "PUMcreateClusteringTime": df.filter(
                 pl.col("event").str.contains(
                     r"^initialize/map..*.computeMapping.createClustering.FromA-MeshTo(?:B-Mesh|\(just-in-time mapping\))$"
                 )
             )
+            .select("duration")
             .max()
             .item(),
-            "PUMcomputeWeightsTime": df.select(
+            "PUMcomputeWeightsTime": df.filter(
                 pl.col("event").str.contains(
                     "^initialize/map..*.computeMapping.computeWeights$"
                 )
             )
+            .select("duration")
             .max()
             .item(),
-            "updateMappingDataCache": df.select(
+            "updateMappingDataCache": df.filter(
                 pl.col("event").str.contains(
-                    "^map..*.updateMappingDataCache.FromA-Mesh$"
+                    r"mapAndReadData\.A-Mesh.*\.updateMappingDataCache\.FromA-Mesh$"
                 )
             )
+            .select("duration")
             .max()
             .item(),
             "mapDataAtTime": df.filter(
-                pl.col("event").str.contains("^map..*.mapConsistentAt.FromA-Mesh$")
+                pl.col("event").str.contains(
+                    r"mapAndReadData\.A-Mesh.*\.mapConsistentAt\.FromA-Mesh$"
+                )
             )
-            .groupby("rank")
+            .group_by("rank")
             .agg(pl.col("duration").sum().alias("duration_sum"))
             .select(pl.col("duration_sum").max())
             .item(),
