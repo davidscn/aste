@@ -78,7 +78,7 @@ def timingStats(dir: pathlib.Path):
             .item(),
             "computeMappingTime": df.filter(
                 pl.col("event").str.contains(
-                    "^initialize/map..*.computeMapping.FromA-MeshToB-Mesh$"
+                    r"^initialize/map..*.computeMapping.FromA-MeshTo(?:B-Mesh|\(just-in-time mapping\))$"
                 )
             )
             .select("duration")
@@ -86,11 +86,57 @@ def timingStats(dir: pathlib.Path):
             .item(),
             "mapDataTime": df.filter(
                 pl.col("event").str.contains(
-                    "^advance/map..*.mapData.FromA-MeshToB-Mesh$"
+                    r"^advance/map..*.mapData.FromA-MeshTo(?:B-Mesh|\(just-in-time mapping\))$"
                 )
             )
             .select("duration")
             .max()
+            .item(),
+            "PUMqueryVerticesTime": df.filter(
+                pl.col("event").str.contains(
+                    "^initialize/map..*.computeMapping.queryVertices$"
+                )
+            )
+            .groupby("rank")
+            .agg(pl.col("duration").sum().alias("duration_sum"))
+            .select(pl.col("duration_sum").max())
+            .item(),
+            "PUMrbfSolverTime": df.filter(
+                pl.col("event").str.contains(
+                    "^initialize/map..*.computeMapping.rbfSolver$"
+                )
+            )
+            .groupby("rank")
+            .agg(pl.col("duration").sum().alias("duration_sum"))
+            .select(pl.col("duration_sum").max())
+            .item(),
+            "PUMcreateClusteringTime": df.select(
+                pl.col("event").str.contains(
+                    r"^initialize/map..*.computeMapping.createClustering.FromA-MeshTo(?:B-Mesh|\(just-in-time mapping\))$"
+                )
+            )
+            .max()
+            .item(),
+            "PUMcomputeWeightsTime": df.select(
+                pl.col("event").str.contains(
+                    "^initialize/map..*.computeMapping.computeWeights$"
+                )
+            )
+            .max()
+            .item(),
+            "updateMappingDataCache": df.select(
+                pl.col("event").str.contains(
+                    "^map..*.updateMappingDataCache.FromA-Mesh$"
+                )
+            )
+            .max()
+            .item(),
+            "mapDataAtTime": df.filter(
+                pl.col("event").str.contains("^map..*.mapConsistentAt.FromA-Mesh$")
+            )
+            .groupby("rank")
+            .agg(pl.col("duration").sum().alias("duration_sum"))
+            .select(pl.col("duration_sum").max())
             .item(),
         }
     except:
