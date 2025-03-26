@@ -157,17 +157,11 @@ def main(argv):
         ylabel="time to map Data [us]",
         filename=f"{args.prefix}-mapt",
     )
-    plotRuntimeAccuracy(
+    plotVariable(
         df,
-        yname="computeMappingTime",
-        ylabel="time to compute mapping [us]",
-        filename=f"{args.prefix}-computetAccuracy",
-    )
-    plotRuntimeAccuracy(
-        df,
-        yname="mapDataTime",
+        yname="MeanMapDataAtTime",
         ylabel="time to map Data [us]",
-        filename=f"{args.prefix}-maptAccuracy",
+        filename=f"{args.prefix}-mean-mapt",
     )
 
     return 0
