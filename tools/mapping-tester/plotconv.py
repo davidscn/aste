@@ -125,6 +125,12 @@ def main(argv):
     if not df["mesh A"].dtype.is_numeric():
         print("Note: 'mesh A' isn't numeric. The x-axis will not use log scaling.")
 
+    df = df.with_columns(
+        pl.when(pl.col("mapDataTime").is_null())
+        .then(pl.col("mapDataAtTime") + pl.col("updateMappingDataCacheTime"))
+        .otherwise(pl.col("mapDataTime"))
+        .alias("mapDataTime")
+    )
     plotVariable(
         df,
         yname="relative-l2",

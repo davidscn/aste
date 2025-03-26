@@ -126,7 +126,7 @@ def timingStats(dir: pathlib.Path):
             .select("duration")
             .max()
             .item(),
-            "updateMappingDataCache": df.filter(
+            "updateMappingDataCacheTime": df.filter(
                 pl.col("event").str.contains(
                     r"mapAndReadData\.A-Mesh.*\.updateMappingDataCache\.FromA-Mesh$"
                 )
@@ -142,6 +142,15 @@ def timingStats(dir: pathlib.Path):
             .group_by("rank")
             .agg(pl.col("duration").sum().alias("duration_sum"))
             .select(pl.col("duration_sum").max())
+            .item(),
+            "MeanMapDataAtTime": df.filter(
+                pl.col("event").str.contains(
+                    r"mapAndReadData\.A-Mesh.*\.mapConsistentAt\.FromA-Mesh$"
+                )
+            )
+            .group_by("rank")
+            .agg(pl.col("duration").mean().alias("duration_mean"))
+            .select(pl.col("duration_mean").max())
             .item(),
         }
     except:
