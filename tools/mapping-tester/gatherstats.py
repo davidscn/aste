@@ -65,7 +65,7 @@ def timingStats(dir: pathlib.Path):
         df = (
             pl.read_csv(timings_file)
             .filter(pl.col("participant") == "B")
-            .select("event", "duration")
+            .select("event", "duration", "rank")
         )
         return {
             "globalTime": df.filter(pl.col("event") == "_GLOBAL")
@@ -91,6 +91,24 @@ def timingStats(dir: pathlib.Path):
             )
             .select("duration")
             .max()
+            .item(),
+            "AssembleSystemMatrixTime": df.filter(
+                pl.col("event").str.contains(
+                    "^initialize/mapping..*.assembleSystemMatrix$"
+                )
+            )
+            .group_by("rank")
+            .agg(pl.col("duration").sum().alias("duration_sum"))
+            .select(pl.col("duration_sum").max())
+            .item(),
+            "AssembleOutputMatrixTime": df.filter(
+                pl.col("event").str.contains(
+                    "^initialize/mapping..*.assembleOutputMatrix$"
+                )
+            )
+            .group_by("rank")
+            .agg(pl.col("duration").sum().alias("duration_sum"))
+            .select(pl.col("duration_sum").max())
             .item(),
         }
     except:
