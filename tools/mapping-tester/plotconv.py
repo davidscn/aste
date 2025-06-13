@@ -86,6 +86,9 @@ def plotBack(
     plt.gca().invert_xaxis()
     plt.grid()
     plt.legend()
+    import tikzplotlib
+
+    tikzplotlib.save(filename + ".tex")
     plt.savefig(filename + ".pdf")
 
 
@@ -135,9 +138,15 @@ def main(argv):
     )
     plotVariable(
         df,
-        yname="peakMemB",
-        ylabel="peak memory of participant B [Kbytes]",
-        filename=f"{args.prefix}-peakMemB",
+        yname="AssembleOutputMatrixTime",
+        ylabel="runtime",
+        filename=f"{args.prefix}-output-matrix",
+    )
+    plotVariable(
+        df,
+        yname="AssembleSystemMatrixTime",
+        ylabel="runtime",
+        filename=f"{args.prefix}-input-matrix",
     )
     plotVariable(
         df,
@@ -150,18 +159,6 @@ def main(argv):
         yname="mapDataTime",
         ylabel="time to map Data [us]",
         filename=f"{args.prefix}-mapt",
-    )
-    plotRuntimeAccuracy(
-        df,
-        yname="computeMappingTime",
-        ylabel="time to compute mapping [us]",
-        filename=f"{args.prefix}-computetAccuracy",
-    )
-    plotRuntimeAccuracy(
-        df,
-        yname="mapDataTime",
-        ylabel="time to map Data [us]",
-        filename=f"{args.prefix}-maptAccuracy",
     )
 
     return 0
