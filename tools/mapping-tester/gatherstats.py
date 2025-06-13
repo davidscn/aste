@@ -84,6 +84,40 @@ def timingStats(dir: pathlib.Path):
             .select("duration")
             .max()
             .item(),
+            "PUMcreateClusteringTime": df.filter(
+                pl.col("event").str.contains(
+                    "^initialize/map..*.computeMapping.createClustering.FromA-MeshToB-Mesh$"
+                )
+            )
+            .select("duration")
+            .max()
+            .item(),
+            "PUMqueryVerticesTime": df.filter(
+                pl.col("event").str.contains(
+                    "^initialize/map..*.computeMapping.queryVertices$"
+                )
+            )
+            .group_by("rank")
+            .agg(pl.col("duration").sum().alias("duration_sum"))
+            .select(pl.col("duration_sum").max())
+            .item(),
+            "PUMrbfSolverTime": df.filter(
+                pl.col("event").str.contains(
+                    "^initialize/map..*.computeMapping.rbfSolver$"
+                )
+            )
+            .group_by("rank")
+            .agg(pl.col("duration").sum().alias("duration_sum"))
+            .select(pl.col("duration_sum").max())
+            .item(),
+            "PUMcomputeWeightsTime": df.filter(
+                pl.col("event").str.contains(
+                    "^initialize/map..*.computeMapping.computeWeights$"
+                )
+            )
+            .select("duration")
+            .max()
+            .item(),
             "mapDataTime": df.filter(
                 pl.col("event").str.contains(
                     "^advance/map..*.mapData.FromA-MeshToB-Mesh$"
