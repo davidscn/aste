@@ -118,6 +118,86 @@ def timingStats(dir: pathlib.Path):
             .select("duration")
             .max()
             .item(),
+            "BatchedSolverTime": df.filter(
+                pl.col("event").str.contains(
+                    "^initialize/map..*.computeMapping.batchedSolver$"
+                )
+            )
+            .select("duration")
+            .max()
+            .item(),
+            "BatchedSolverInitializationTime": df.filter(
+                pl.col("event").str.contains(
+                    "^initialize/map..*.solver.initializeKokkos$"
+                )
+            )
+            .select("duration")
+            .max()
+            .item(),
+            "BatchedSolverqueryVerticesTime": df.filter(
+                pl.col("event").str.contains("^initialize/map..*.solver.queryVertices$")
+            )
+            .select("duration")
+            .max()
+            .item(),
+            "BatchedSolverCompute2DOffsetsTime": df.filter(
+                pl.col("event").str.contains(
+                    "^initialize/map..*.solver.kernel.compute2DOffsets$"
+                )
+            )
+            .select("duration")
+            .max()
+            .item(),
+            "BatchedSolvercopyMeshesTime": df.filter(
+                pl.col("event").str.contains("^initialize/map..*.solver.copyMeshes$")
+            )
+            .select("duration")
+            .max()
+            .item(),
+            "BatchedSolvercomputeWeightsTime": df.filter(
+                pl.col("event").str.contains(
+                    "^initialize/map..*.solver.kernel.computeWeights$"
+                )
+            )
+            .select("duration")
+            .max()
+            .item(),
+            "BatchedSolvercomputePolynomialQRTime": df.filter(
+                pl.col("event").str.contains(
+                    "^initialize/map..*.solver.kernel.computePolynomialQR$"
+                )
+            )
+            .select("duration")
+            .max()
+            .item(),
+            "BatchedSolverAssembleInputMatricesTime": df.filter(
+                pl.col("event").str.contains(
+                    "^initialize/map..*.solver.kernel.assembleInputMatrices$"
+                )
+            )
+            .select("duration")
+            .max()
+            .item(),
+            "BatchedSolverAssembleOutputMatricesTime": df.filter(
+                pl.col("event").str.contains(
+                    "^initialize/map..*.solver.kernel.assembleOutputMatrices$"
+                )
+            )
+            .select("duration")
+            .max()
+            .item(),
+            "BatchedSolverComputeLUTime": df.filter(
+                pl.col("event").str.contains("^initialize/map..*.solver.kernel.lu$")
+            )
+            .select("duration")
+            .max()
+            .item(),
+            "BatchedSolverAllocateDataTime": df.filter(
+                pl.col("event").str.contains("^initialize/map..*.solver.allocateData$")
+            )
+            .select("duration")
+            .max()
+            .item(),
             "mapDataTime": df.filter(
                 pl.col("event").str.contains(
                     "^advance/map..*.mapData.FromA-MeshToB-Mesh$"
@@ -126,23 +206,25 @@ def timingStats(dir: pathlib.Path):
             .select("duration")
             .max()
             .item(),
-            "AssembleSystemMatrixTime": df.filter(
-                pl.col("event").str.contains(
-                    "^initialize/mapping..*.assembleSystemMatrix$"
-                )
+            "BatchedSolvercopyFromHostToDeviceTime": df.filter(
+                pl.col("event").str.contains("^advance/map..*.solver.copyHostToDevice$")
             )
-            .group_by("rank")
-            .agg(pl.col("duration").sum().alias("duration_sum"))
-            .select(pl.col("duration_sum").max())
+            .select("duration")
+            .max()
             .item(),
-            "AssembleOutputMatrixTime": df.filter(
+            "BatchedSolvercopyFromDeviceToHostTime": df.filter(
+                pl.col("event").str.contains("^advance/map..*.solver.copyDeviceToHost$")
+            )
+            .select("duration")
+            .max()
+            .item(),
+            "BatchedSolverSolveTime": df.filter(
                 pl.col("event").str.contains(
-                    "^initialize/mapping..*.assembleOutputMatrix$"
+                    "^advance/map..*.solver.kernel.batchedSolve$"
                 )
             )
-            .group_by("rank")
-            .agg(pl.col("duration").sum().alias("duration_sum"))
-            .select(pl.col("duration_sum").max())
+            .select("duration")
+            .max()
             .item(),
         }
     except:
