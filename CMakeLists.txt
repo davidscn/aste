@@ -108,12 +108,19 @@ configure_file(src/precice-aste-partition . COPYONLY)
 configure_file(src/precice-aste-join . COPYONLY)
 configure_file(src/precice-aste-evaluate . COPYONLY)
 
+# For the mapping tester
+configure_file(tools/mapping-tester/gatherstats.py . COPYONLY)
+configure_file(tools/mapping-tester/plotconv.py . COPYONLY)
+configure_file(tools/mapping-tester/preparemeshes.py . COPYONLY)
+configure_file(tools/mapping-tester/generate.py . COPYONLY)
+configure_file(tools/mapping-tester/aggregate-timings.py . COPYONLY)
+
 include(GNUInstallDirs)
 install(TARGETS precice-aste-run DESTINATION ${CMAKE_INSTALL_BINDIR})
 if(METIS_FOUND)
 install(TARGETS metisAPI DESTINATION ${CMAKE_INSTALL_LIBDIR})
 endif()
-install(PROGRAMS ${CMAKE_CURRENT_SOURCE_DIR}/src/precice-aste-partition ${CMAKE_CURRENT_SOURCE_DIR}/src/precice-aste-join ${CMAKE_CURRENT_SOURCE_DIR}/src/precice-aste-evaluate DESTINATION ${CMAKE_INSTALL_BINDIR})
+install(PROGRAMS ${CMAKE_CURRENT_SOURCE_DIR}/src/precice-aste-partition ${CMAKE_CURRENT_SOURCE_DIR}/src/precice-aste-join ${CMAKE_CURRENT_SOURCE_DIR}/src/precice-aste-evaluate ${CMAKE_CURRENT_SOURCE_DIR}/tools/mapping-tester/gatherstats.py ${CMAKE_CURRENT_SOURCE_DIR}/tools/mapping-tester/plotconv.py ${CMAKE_CURRENT_SOURCE_DIR}/tools/mapping-tester/preparemeshes.py ${CMAKE_CURRENT_SOURCE_DIR}/tools/mapping-tester/generate.py ${CMAKE_CURRENT_SOURCE_DIR}/tools/mapping-tester/aggregate-timings.py DESTINATION ${CMAKE_INSTALL_BINDIR})
 
 enable_testing()
 
