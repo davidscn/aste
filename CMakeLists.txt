@@ -120,16 +120,24 @@ if(NOT ASTE_USE_ASTE_JOINER_CPP)
   configure_file(src/precice-aste-join . COPYONLY)
 endif()
 
+# For the mapping tester
+configure_file(tools/mapping-tester/gatherstats.py . COPYONLY)
+configure_file(tools/mapping-tester/plotconv.py . COPYONLY)
+configure_file(tools/mapping-tester/preparemeshes.py . COPYONLY)
+configure_file(tools/mapping-tester/generate.py . COPYONLY)
+configure_file(tools/mapping-tester/aggregate-timings.py . COPYONLY)
+
 include(GNUInstallDirs)
 install(TARGETS precice-aste-run DESTINATION ${CMAKE_INSTALL_BINDIR})
 if(METIS_FOUND)
-install(TARGETS metisAPI DESTINATION ${CMAKE_INSTALL_LIBDIR})
+  install(TARGETS metisAPI DESTINATION ${CMAKE_INSTALL_LIBDIR})
 endif()
+
 if(ASTE_USE_ASTE_JOINER_CPP)
-install(TARGETS precice-aste-join DESTINATION ${CMAKE_INSTALL_BINDIR})
-install(PROGRAMS ${CMAKE_CURRENT_SOURCE_DIR}/src/precice-aste-partition ${CMAKE_CURRENT_SOURCE_DIR}/src/precice-aste-evaluate DESTINATION ${CMAKE_INSTALL_BINDIR})
+  install(TARGETS precice-aste-join DESTINATION ${CMAKE_INSTALL_BINDIR})
+  install(PROGRAMS ${CMAKE_CURRENT_SOURCE_DIR}/src/precice-aste-partition ${CMAKE_CURRENT_SOURCE_DIR}/src/precice-aste-evaluate ${CMAKE_CURRENT_SOURCE_DIR}/tools/mapping-tester/gatherstats.py ${CMAKE_CURRENT_SOURCE_DIR}/tools/mapping-tester/plotconv.py ${CMAKE_CURRENT_SOURCE_DIR}/tools/mapping-tester/preparemeshes.py ${CMAKE_CURRENT_SOURCE_DIR}/tools/mapping-tester/generate.py ${CMAKE_CURRENT_SOURCE_DIR}/tools/mapping-tester/aggregate-timings.py DESTINATION ${CMAKE_INSTALL_BINDIR})
 else()
-install(PROGRAMS ${CMAKE_CURRENT_SOURCE_DIR}/src/precice-aste-partition ${CMAKE_CURRENT_SOURCE_DIR}/src/precice-aste-join ${CMAKE_CURRENT_SOURCE_DIR}/src/precice-aste-evaluate DESTINATION ${CMAKE_INSTALL_BINDIR})
+  install(PROGRAMS ${CMAKE_CURRENT_SOURCE_DIR}/src/precice-aste-partition ${CMAKE_CURRENT_SOURCE_DIR}/src/precice-aste-join ${CMAKE_CURRENT_SOURCE_DIR}/src/precice-aste-evaluate ${CMAKE_CURRENT_SOURCE_DIR}/tools/mapping-tester/gatherstats.py ${CMAKE_CURRENT_SOURCE_DIR}/tools/mapping-tester/plotconv.py ${CMAKE_CURRENT_SOURCE_DIR}/tools/mapping-tester/preparemeshes.py ${CMAKE_CURRENT_SOURCE_DIR}/tools/mapping-tester/generate.py ${CMAKE_CURRENT_SOURCE_DIR}/tools/mapping-tester/aggregate-timings.py DESTINATION ${CMAKE_INSTALL_BINDIR})
 endif()
 
 enable_testing()
